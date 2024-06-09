@@ -4,41 +4,68 @@
       Аудит АСУ на соответствие требованиям информационной безопасности.
     </h1>
 
-    <p class="introduction__label">
-      Данное приложение используется для проведения аудита АСУ для определения ее уровня защищенности по критериям Информационной Безопасности согласно методике оценки показателя состояния технической защиты информации и обеспечения безопасности значимых объектов критической информационной инфраструктуры Российской Федерации утвержденной ФСТЭК РФ 02 мая 2024 года.
-    </p>
+    <div class="introduction__tests">
+      <button
+        class="introduction__test"
+        v-for="test in tests"
+        :key="test.id"
+        @click="handleTest(test)"
+      >
+        <h4 class="introduction__test-title">
+          {{ test.title }}
+        </h4>
 
-    <button class="introduction__button" @click="handleTest">
-      Начать тестирование
-    </button>
+        <p class="introduction__test-label">
+          {{ test.label }}
+        </p>
+      </button>
+    </div>
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
 
+import { COMPONENT } from "../../App.vue";
+
 export default defineComponent({
   name: "introduction",
   props: {
-    isTest: {
-      type: Boolean,
-      default: false
+    component: {
+      type: String,
+      required: true,
     },
-    isResult: {
-      type: Boolean,
-      default: false
-    }
+    tests: {
+      type: Array,
+      required: true,
+    },
+    test: {
+      type: Object,
+      required: true,
+    },
   },
   emits: {
-    "update:isTest": null,
-    "update:isResult": null,
+    "update:component": null,
+    "update:test": null,
   },
   methods: {
-    handleTest() {
-      this.$emit("update:isTest", true);
-      this.$emit("update:isResult", false);
-    }
-  }
+    handleTest(test) {
+      this.$emit("update:test", test);
+
+      switch (test.id) {
+        case 0:
+          this.$emit("update:component", COMPONENT.test);
+
+          break;
+        case 1:
+          this.$emit("update:component", COMPONENT.security);
+
+          break;
+        default:
+          break;
+      }
+    },
+  },
 });
 </script>
 
@@ -56,26 +83,39 @@ export default defineComponent({
 .introduction__title {
   font-size: 56px;
   line-height: 60px;
+  margin-bottom: 54px;
+  color: rgb(60, 60, 67);
 }
 
-.introduction__label {
+.introduction__tests {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 24px;
+}
+
+.introduction__test {
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+  font-family: "Roboto", sans-serif;
+  background: #f6f6f7;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 24px;
+  border-radius: 12px;
+}
+
+.introduction__test-title {
   font-size: 20px;
   line-height: 24px;
-  color: #7a7a7a;
-  margin-top: 8px;
+  color: rgb(60, 60, 67);
 }
 
-.introduction__button {
-  font-family: "Roboto", sans-serif;
-  font-size: 14px;
-  line-height: 18px;
-  font-weight: 600;
-  padding: 10px 20px;
-  border-radius: 20px;
-  border: none;
-  color: #0d121b;
-  background-color: #f7d336;
-  cursor: pointer;
-  margin-top: 24px;
+.introduction__test-label {
+  font-size: 18px;
+  line-height: 22px;
+  color: rgba(60, 60, 67, .78);
+  text-align: justify;
 }
 </style>

@@ -35,14 +35,14 @@ export default defineComponent({
   name: "result",
   props: {
     test: {
-      type: Array,
-      default: () => []
-    }
+      type: Object,
+      required: true,
+    },
   },
   computed: {
     displayedKzi() {
       return Object.keys(KZI).map((key) => {
-        return this.test
+        return this.test.questions
           .filter((question) => question.kzi === parseInt(key))
           .reduce((prev, current) => {
             if (current.answer) {
@@ -103,12 +103,13 @@ export default defineComponent({
 .result__title {
   font-size: 56px;
   line-height: 60px;
+  color: rgb(60, 60, 67);
 }
 
 .result__label {
   font-size: 20px;
   line-height: 24px;
-  color: #7a7a7a;
+  color: rgba(60, 60, 67, .78);
   margin-top: 12px;
 }
 

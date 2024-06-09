@@ -2,35 +2,16 @@
   <div class="test">
     <TestNavigation
       class="test__navigation"
-      :test="test"
+      :questions="questions"
       v-model:questionIndex="questionIndex"
     />
 
-    <div class="test__group">
-      <TestQuestion
-        class="test__question"
-        :question="displayedQuestion"
-        @question="handleQuestion"
-      />
-
-      <div class="test__buttons">
-        <button
-          class="test__button test__button--next"
-          :disabled="isNextQuestionDisabled"
-          @click="handleNextQuestion"
-        >
-          Продолжить
-        </button>
-
-        <button
-          class="test__button test__button--complete"
-          :disabled="isCompleteDisabled"
-          @click="handleComplete"
-        >
-          Завершить
-        </button>
-      </div>
-    </div>
+    <TestQuestion
+      v-if="displayedQuestion"
+      class="test__question"
+      :question="displayedQuestion"
+      @question="handleQuestion"
+    />
   </div>
 </template>
 
@@ -39,6 +20,7 @@ import { defineComponent } from "vue";
 
 import TestNavigation from "./navigation.vue";
 import TestQuestion from "./question.vue";
+import { COMPONENT } from "../../App.vue";
 
 export default defineComponent({
   name: "test",
@@ -48,22 +30,20 @@ export default defineComponent({
   },
   props: {
     test: {
+      type: Object,
+      required: true,
+    },
+    questions: {
       type: Array,
       default: () => []
     },
-    isTest: {
-      type: Boolean,
-      default: false
+    component: {
+      type: String,
+      required: true,
     },
-    isResult: {
-      type: Boolean,
-      default: false
-    }
   },
   emits: {
-    "update:isTest": null,
-    "update:isResult": null,
-    question: null,
+    "update:component": null,
   },
   data() {
     return {
@@ -72,30 +52,47 @@ export default defineComponent({
   },
   computed: {
     displayedQuestion() {
-      return this.test[this.questionIndex];
+      return this.questions[this.questionIndex];
     },
-
-    isNextQuestionDisabled() {
-      return this.displayedQuestion.answer === null || this.questionIndex === this.test.length - 1;
-    },
-
-    isCompleteDisabled() {
-      return this.test.some((question) => question.answer === null);
-    }
   },
   methods: {
     handleQuestion(question) {
       this.$emit("question", question);
-    },
 
-    handleNextQuestion() {
-      this.questionIndex += 1;
-    },
+      const findQuestionIndex = this.questions.findIndex((item) => item.answer === null);
 
-    handleComplete() {
-      this.$emit("update:isTest", false);
-      this.$emit("update:isResult", true);
-    }
+      if (findQuestionIndex !== -1) {
+        if (this.questions[this.questionIndex + 1]) {
+          this.questionIndex += 1;
+        } else {
+          this.questionIndex = findQuestionIndex;
+        }
+      } else {
+        switch (this.component) {
+          case COMPONENT.security:
+            this.$emit("update:component", COMPONENT.class);
+
+            break;
+          case COMPONENT.test:
+            switch (this.test.id) {
+              case 0:
+                this.$emit("update:component", COMPONENT.result);
+
+                break;
+              case 1:
+                this.$emit("update:component", COMPONENT.resultSecurity);
+
+                break;
+              default:
+                break;
+            }
+
+            break;
+          default:
+            break;
+        }
+      }
+    },
   }
 });
 </script>
@@ -105,57 +102,11 @@ export default defineComponent({
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  row-gap: 24px;
   min-height: 100vh;
+  padding: 100px 0;
 }
 
 .test__navigation {
-  position: absolute;
-  top: 50px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-}
-
-.test__group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  row-gap: 24px;
-  margin: auto 0;
-}
-
-.test__question {
-  margin: auto 0;
-}
-
-.test__buttons {
-  display: flex;
-  align-items: center;
-  column-gap: 16px;
-}
-
-.test__button {
-  font-family: "Roboto", sans-serif;
-  font-size: 14px;
-  line-height: 18px;
-  font-weight: 600;
-  padding: 10px 20px;
-  border-radius: 20px;
-  border: none;
-  color: rgba(255, 255, 245, .86);
-  background-color: #32363f;
-  cursor: pointer;
-}
-
-.test__button--complete {
-  color: #0d121b;
-  background-color: #f7d336;
-}
-
-.test__button:disabled {
-  opacity: 0.5;
-  cursor: default;
+  margin-bottom: 54px;
 }
 </style>

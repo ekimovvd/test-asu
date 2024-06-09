@@ -1,13 +1,13 @@
 <template>
   <div class="test-navigation">
     <button
-      class="test-navigation__item"
-      :class="handleItemActiveClass(item)"
-      v-for="item in test"
-      :key="item.id"
-      @click="handleItem(item)"
+      class="test-navigation__question"
+      :class="handleQuestionActiveClass(question)"
+      v-for="question in questions"
+      :key="question.id"
+      @click="handleQuestion(question)"
     >
-      {{ item.id + 1 }}
+      {{ question.id + 1 }}
     </button>
   </div>
 </template>
@@ -18,7 +18,7 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "test-navigation",
   props: {
-    test: {
+    questions: {
       type: Array,
       default: () => []
     },
@@ -31,15 +31,15 @@ export default defineComponent({
     "update:questionIndex": null
   },
   methods: {
-    handleItemActiveClass({ id, answer }) {
+    handleQuestionActiveClass({ id, answer }) {
       if (id === this.questionIndex) {
-        return "test-navigation__item--selected";
+        return "test-navigation__question--selected";
       }
 
-      return answer !== null ? "test-navigation__item--active" : "";
+      return answer !== null ? "test-navigation__question--active" : "";
     },
 
-    handleItem({ id }) {
+    handleQuestion({ id }) {
       this.$emit("update:questionIndex", id);
     }
   }
@@ -56,24 +56,23 @@ export default defineComponent({
   padding: 0 50px;
 }
 
-.test-navigation__item {
+.test-navigation__question {
   width: 40px;
   height: 40px;
   padding: 0;
-  border: 1px solid #32363f;
-  background: none;
+  border: none;
+  background: #ebebef;
   outline: none;
   cursor: pointer;
   font-size: 14px;
   line-height: 18px;
-  color: #7a7a7a;
+  color: rgba(60, 60, 67);
+  border-radius: 8px;
 }
 
-.test-navigation__item--selected {
-  color: #d9e6eb;
-}
-
-.test-navigation__item--active {
-  color: #f7d336;
+.test-navigation__question--selected,
+.test-navigation__question--active {
+  color: #ffffff;
+  background: #646cff;
 }
 </style>

@@ -11,18 +11,12 @@
     <div class="test-question__answers">
       <button
         class="test-question__answer"
-        :class="handleAnswerActiveClass(true)"
-        @click="handleAnswer(true)"
+        v-for="answer in displayedAnswers"
+        :key="answer.id"
+        :class="answer.class"
+        @click="handleAnswer(answer.value)"
       >
-        Да
-      </button>
-
-      <button
-        class="test-question__answer"
-        :class="handleAnswerActiveClass(false)"
-        @click="handleAnswer(false)"
-      >
-        Нет
+        {{ answer.label }}
       </button>
     </div>
   </div>
@@ -43,22 +37,31 @@ export default defineComponent({
     question: null,
   },
   computed: {
-    displayedAnswerClass() {
-      return this.question
-    }
+    displayedAnswers() {
+      return [
+        {
+          id: 0,
+          label: "Да",
+          class: "test-question__answer--yes",
+          value: true,
+        },
+        {
+          id: 1,
+          label: "Нет",
+          class: "",
+          value: false,
+        },
+      ];
+    },
   },
   methods: {
     handleAnswer(answer) {
       this.$emit("question", {
-        question: this.question,
+        ...this.question,
         answer
       });
     },
-
-    handleAnswerActiveClass(answer) {
-      return this.question.answer === answer ? "test-question__answer--active" : "";
-    }
-  }
+  },
 });
 </script>
 
@@ -76,12 +79,13 @@ export default defineComponent({
 .test-question__title {
   font-size: 56px;
   line-height: 60px;
+  color: rgb(60, 60, 67);
 }
 
 .test-question__name {
   font-size: 20px;
   line-height: 24px;
-  color: #7a7a7a;
+  color: rgba(60, 60, 67, .78);
   max-width: 700px;
 }
 
@@ -93,21 +97,23 @@ export default defineComponent({
 
 .test-question__answer {
   font-family: "Roboto", sans-serif;
-  font-weight: 500;
-  font-size: 18px;
-  line-height: 22px;
-  background: none;
-  padding: 0;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 18px;
+  padding: 11px 20px 10px 20px;
   border: none;
   outline: none;
   display: flex;
   align-items: center;
   column-gap: 8px;
   cursor: pointer;
-  color: #d9e6eb;
+  color: rgb(60, 60, 67);
+  background: #ebebef;
+  border-radius: 20px;
 }
 
-.test-question__answer--active {
-  color: #f7d336;
+.test-question__answer--yes {
+  background: #646cff;
+  color: #ffffff;
 }
 </style>
