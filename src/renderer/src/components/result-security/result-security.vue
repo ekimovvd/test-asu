@@ -8,9 +8,15 @@
       По результатам проведенного аудита на соответствие требованиям информационной безопасности для АСУ согласно приказу ФСТЕК от 14 марта 2014 г. №31 ваша АСУ {{ displayedCorrect }} классу защищенности.
     </p>
 
-    <button class="result-security__button" @click="handleDocument">
-      Скачать полный отчет
-    </button>
+    <div class="result-security__buttons">
+      <button class="result-security__button result-security__button--exit" @click="handleExit">
+        Вернуться на главную
+      </button>
+
+      <button class="result-security__button" @click="handleDocument">
+        Скачать полный отчет
+      </button>
+    </div>
   </div>
 </template>
 
@@ -18,7 +24,9 @@
 import { defineComponent } from 'vue';
 
 import { CLASS_NAME } from '../../static/data';
-import { saveDocument } from '../../utils/functions';
+import { COMPONENT } from '../../App.vue';
+
+import { downloadTest2 } from '../../utils/functions';
 
 export default defineComponent({
   name: "result-security",
@@ -27,6 +35,17 @@ export default defineComponent({
       type: Object,
       required: true,
     },
+    organizationName: {
+      type: String,
+      required: true,
+    },
+    asuName: {
+      type: String,
+      required: true,
+    },
+  },
+  emits: {
+    "update:component": null,
   },
   computed: {
     displayedCorrect() {
@@ -55,8 +74,17 @@ export default defineComponent({
   },
   methods: {
     handleDocument() {
-      saveDocument(this.displayedErrors, "document.docx");
+      downloadTest2({
+        data: this.displayedErrors,
+        organizationName: this.organizationName,
+        asuName: this.asuName,
+        result: `В ходе проведения аудита автоматизированной системы управления "${this.asuName}" ей был присвоен класс защищенности ${CLASS_NAME[this.displayedClass]}, и его результатом является следующий вывод: ${this.displayedCorrect} классу защищенности согласно требованиям указанным в приказе ФСТЕК от 14 марта 2014 г. №31`
+      })
     },
+
+    handleExit() {
+      this.$emit("update:component", COMPONENT.introduction);
+    }
   },
 });
 </script>
@@ -85,6 +113,12 @@ export default defineComponent({
   margin-top: 12px;
 }
 
+.result-security__buttons {
+  display: flex;
+  align-items: center;
+  column-gap: 24px;
+}
+
 .result-security__button {
   font-family: "Roboto", sans-serif;
   font-weight: 600;
@@ -101,5 +135,10 @@ export default defineComponent({
   color: #ffffff;
   border-radius: 20px;
   margin-top: 24px;
+}
+
+.result-security__button--exit {
+  color: rgb(60, 60, 67);
+  background: #ebebef;
 }
 </style>

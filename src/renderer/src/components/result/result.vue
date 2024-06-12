@@ -13,11 +13,23 @@
         {{ displayedResult }}
       </span>
     </p>
+
+    <div class="result__buttons">
+      <button class="result__button result__button--exit" @click="handleExit">
+        Вернуться на главную
+      </button>
+
+      <button class="result__button" @click="handleDocument">
+        Скачать полный отчет
+      </button>
+    </div>
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
+import { COMPONENT } from "../../App.vue";
+import { downloadTest1 } from "../../utils/functions";
 
 const KZI = {
   0: 0.1,
@@ -38,6 +50,17 @@ export default defineComponent({
       type: Object,
       required: true,
     },
+    organizationName: {
+      type: String,
+      required: true,
+    },
+    asuName: {
+      type: String,
+      required: true,
+    },
+  },
+  emits: {
+    "update:component": null,
   },
   computed: {
     displayedKzi() {
@@ -85,6 +108,22 @@ export default defineComponent({
 
       return "result__span--red";
     }
+  },
+  methods: {
+    handleExit() {
+      this.$emit("update:component", COMPONENT.introduction);
+    },
+
+    handleDocument() {
+      downloadTest1({
+        data: this.test.questions
+          .filter((question) => !question.answer)
+          .map((question) => question.name),
+        organizationName: this.organizationName,
+        asuName: this.asuName,
+        result: this.displayedResult
+      })
+    }
   }
 });
 </script>
@@ -123,5 +162,34 @@ export default defineComponent({
 
 .result__span--red {
   color: #f14158;
+}
+
+.result__buttons {
+  display: flex;
+  align-items: center;
+  column-gap: 24px;
+}
+
+.result__button {
+  font-family: "Roboto", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 18px;
+  padding: 11px 20px 10px 20px;
+  border: none;
+  outline: none;
+  display: flex;
+  align-items: center;
+  column-gap: 8px;
+  cursor: pointer;
+  background: #646cff;
+  color: #ffffff;
+  border-radius: 20px;
+  margin-top: 24px;
+}
+
+.result__button--exit {
+  color: rgb(60, 60, 67);
+  background: #ebebef;
 }
 </style>

@@ -7,6 +7,8 @@
       :test="test"
       :tests="tests"
       v-model:component="component"
+      v-model:organizationName="organizationName"
+      v-model:asuName="asuName"
       @securityQuestion="handleSecurityQuestion"
       @question="handleQuestion"
       @update:test="handleTest"
@@ -50,6 +52,8 @@ export default defineComponent({
       component: COMPONENT.introduction,
       test: {},
       tests: TESTS,
+      organizationName: "",
+      asuName: "",
     };
   },
   computed: {

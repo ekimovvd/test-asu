@@ -4,17 +4,32 @@
       Аудит АСУ на соответствие требованиям информационной безопасности.
     </h1>
 
+    <div class="introduction__fields">
+      <input
+        class="introduction__field"
+        type="text"
+        placeholder="Введите название организации/компании"
+        :value="organizationName"
+        @input="handleOrganizationName"
+      />
+
+      <input
+        class="introduction__field"
+        type="text"
+        placeholder="Введите название АСУ"
+        :value="asuName"
+        @input="handleAsuName"
+      />
+    </div>
+
     <div class="introduction__tests">
       <button
         class="introduction__test"
         v-for="test in tests"
         :key="test.id"
+        :disabled="isTestDisabled"
         @click="handleTest(test)"
       >
-        <h4 class="introduction__test-title">
-          {{ test.title }}
-        </h4>
-
         <p class="introduction__test-label">
           {{ test.label }}
         </p>
@@ -43,10 +58,25 @@ export default defineComponent({
       type: Object,
       required: true,
     },
+    organizationName: {
+      type: String,
+      required: true,
+    },
+    asuName: {
+      type: String,
+      required: true,
+    },
   },
   emits: {
     "update:component": null,
     "update:test": null,
+    "update:organizationName": null,
+    "update:asuName": null,
+  },
+  computed: {
+    isTestDisabled() {
+      return !this.organizationName || !this.asuName;
+    }
   },
   methods: {
     handleTest(test) {
@@ -64,6 +94,14 @@ export default defineComponent({
         default:
           break;
       }
+    },
+
+    handleOrganizationName(event) {
+      this.$emit("update:organizationName", event.target.value);
+    },
+
+    handleAsuName(event) {
+      this.$emit("update:asuName", event.target.value);
     },
   },
 });
@@ -106,6 +144,11 @@ export default defineComponent({
   border-radius: 12px;
 }
 
+.introduction__test:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
 .introduction__test-title {
   font-size: 20px;
   line-height: 24px;
@@ -117,5 +160,23 @@ export default defineComponent({
   line-height: 22px;
   color: rgba(60, 60, 67, .78);
   text-align: justify;
+}
+
+.introduction__fields {
+  display: flex;
+  flex-direction: column;
+  row-gap: 12px;
+  margin-bottom: 24px;
+  max-width: 350px;
+  width: 100%;
+}
+
+.introduction__field {
+  border: none;
+  outline: none;
+  border-radius: 8px;
+  padding: 15px 20px;
+  color: rgb(60, 60, 67);
+  background: #ebebef;
 }
 </style>

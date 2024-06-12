@@ -12,6 +12,10 @@
       :question="displayedQuestion"
       @question="handleQuestion"
     />
+
+    <button class="test__exit" @click="handleExit">
+      Завершить тестирование
+    </button>
   </div>
 </template>
 
@@ -93,6 +97,10 @@ export default defineComponent({
         }
       }
     },
+
+    handleExit() {
+      this.$emit("update:component", COMPONENT.introduction);
+    }
   }
 });
 </script>
@@ -108,5 +116,26 @@ export default defineComponent({
 
 .test__navigation {
   margin-bottom: 54px;
+}
+
+.test__exit {
+  font-family: "Roboto", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 18px;
+  padding: 11px 20px 10px 20px;
+  border: none;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 8px;
+  cursor: pointer;
+  color: rgb(60, 60, 67);
+  background: #ebebef;
+  border-radius: 20px;
+  max-width: 250px;
+  text-align: center;
+  margin: auto auto 0 auto;
 }
 </style>
